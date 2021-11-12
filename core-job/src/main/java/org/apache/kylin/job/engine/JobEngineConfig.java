@@ -39,7 +39,14 @@ public class JobEngineConfig {
     public static final String CUBE_MERGE_JOB_CONF_SUFFIX = "cube_merge";
 
     private static File getJobConfig(String fileName) {
-        String path = System.getProperty(KylinConfig.KYLIN_CONF);
+        KylinConfig kylinConfig = KylinConfig.getInstanceFromEnv();
+        String path = kylinConfig.getKylinConfDirectory();
+        logger.info("Kylin Conf Directory is: {}", path);
+        if (StringUtils.isEmpty(path)) {
+            logger.info("Kylin Conf Directory was not set.");
+            path = System.getProperty(KylinConfig.KYLIN_CONF);
+            logger.info("Setting it to: {}", path);
+        }
         logger.info("Path from system property: {}", path);
         if (StringUtils.isNotEmpty(path)) {
             return new File(path, fileName);

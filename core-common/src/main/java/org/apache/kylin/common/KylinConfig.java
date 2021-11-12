@@ -140,6 +140,9 @@ public class KylinConfig extends KylinConfigBase {
         synchronized (KylinConfig.class) {
             KylinConfig config = THREAD_ENV_INSTANCE.get();
             if (config != null) {
+                if (StringUtils.isEmpty(config.getKylinConfDirectory()) && SYS_ENV_INSTANCE != null) {
+                    config.setKylinConfDirectory(SYS_ENV_INSTANCE.getKylinConfDirectory());
+                }
                 return config;
             }
 
