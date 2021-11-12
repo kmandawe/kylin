@@ -42,9 +42,11 @@ import org.apache.kylin.common.util.SourceConfigurationUtil;
 
 import org.apache.kylin.shaded.com.google.common.base.Preconditions;
 import org.apache.kylin.shaded.com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BeelineHiveClient implements IHiveClient {
-
+    private static final Logger logger = LoggerFactory.getLogger(BeelineHiveClient.class);
     private static final String HIVE_AUTH_USER = "user";
     private static final String HIVE_AUTH_PASSWD = "password";
     private Connection cnct;
@@ -247,14 +249,17 @@ public class BeelineHiveClient implements IHiveClient {
         if ("# Partition Information".equals(resultSet.getString(1).trim())) {
             resultSet.next();
             Preconditions.checkArgument("# col_name".equals(resultSet.getString(1).trim()));
-            resultSet.next();
-            Preconditions.checkArgument("".equals(resultSet.getString(1).trim()));
+            // There are no blank row before the list of partition columns, need to remove next 2 lines
+//            resultSet.next();
+//            Preconditions.checkArgument("".equals(resultSet.getString(1).trim()));
             while (resultSet.next()) {
                 if ("".equals(resultSet.getString(1).trim())) {
                     break;
                 }
-                partitionColumns.add(new HiveTableMeta.HiveTableColumnMeta(resultSet.getString(1).trim(),
-                        resultSet.getString(2).trim(), resultSet.getString(3).trim()));
+                HiveTableMeta.HiveTableColumnMeta columnMeta = new HiveTableMeta.HiveTableColumnMeta(resultSet.getString(1).trim(),
+                        resultSet.getString(2).trim(), resultSet.getString(3).trim());
+                partitionColumns.add(columnMeta);
+                logger.info("Added to partition columns: {}", columnMeta);
             }
             builder.setPartitionColumns(partitionColumns);
         }
