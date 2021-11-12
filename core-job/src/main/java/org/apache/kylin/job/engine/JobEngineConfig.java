@@ -40,11 +40,13 @@ public class JobEngineConfig {
 
     private static File getJobConfig(String fileName) {
         String path = System.getProperty(KylinConfig.KYLIN_CONF);
+        logger.info("Path from system property: {}", path);
         if (StringUtils.isNotEmpty(path)) {
             return new File(path, fileName);
         }
 
         path = KylinConfig.getKylinHome();
+        logger.info("Path from kylin home: {}", path);
         if (StringUtils.isNotEmpty(path)) {
             return new File(path + File.separator + "conf", fileName);
         }
@@ -58,7 +60,7 @@ public class JobEngineConfig {
         } else {
             hadoopJobConfFile = (HADOOP_JOB_CONF_FILENAME + ".xml");
         }
-
+        logger.info("Retrieving conf file: {}", hadoopJobConfFile);
         File jobConfig = getJobConfig(hadoopJobConfFile);
         if (jobConfig == null || !jobConfig.exists()) {
             logger.warn("fail to locate " + hadoopJobConfFile + ", trying to locate " + HADOOP_JOB_CONF_FILENAME + ".xml");

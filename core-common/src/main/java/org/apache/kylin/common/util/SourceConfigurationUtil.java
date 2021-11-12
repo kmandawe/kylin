@@ -73,8 +73,14 @@ public class SourceConfigurationUtil {
         Map<String, String> confProps = new HashMap<>();
         File confFile;
         String xmlFileName = filename + ".xml";
-        String path = System.getProperty(KylinConfig.KYLIN_CONF);
-
+        KylinConfig kylinConfig = KylinConfig.getInstanceFromEnv();
+        String path = kylinConfig.getKylinConfDirectory();
+        logger.info("Kylin Conf Directory is: {}", path);
+        if (StringUtils.isEmpty(path)) {
+            logger.info("Kylin Conf Directory was not set.");
+            path = System.getProperty(KylinConfig.KYLIN_CONF);
+            logger.info("Setting it to: {}", path);
+        }
         if (StringUtils.isNotEmpty(path)) {
             confFile = new File(path, xmlFileName);
         } else {

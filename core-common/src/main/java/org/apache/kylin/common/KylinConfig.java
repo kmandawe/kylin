@@ -68,6 +68,8 @@ public class KylinConfig extends KylinConfigBase {
     // static cached instances
     private static KylinConfig SYS_ENV_INSTANCE = null;
 
+    private String kylinConfDirectory = null;
+
     // static default Ordered Properties, only need load from classpath once
     private static OrderedProperties defaultOrderedProperties = new OrderedProperties();
 
@@ -148,6 +150,7 @@ public class KylinConfig extends KylinConfigBase {
                     buildDefaultOrderedProperties();
 
                     config = new KylinConfig();
+                    config.setKylinConfDirectory(System.getProperty(KylinConfig.KYLIN_CONF));
                     try {
                         config.reloadKylinConfig(buildSiteProperties());
                     } catch (KylinConfigCannotInitException e) {
@@ -544,7 +547,7 @@ public class KylinConfig extends KylinConfigBase {
                 orderedProperties.setProperty(sysProp, sysPropValue);
             }
         }
-        
+
         final StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : orderedProperties.entrySet()) {
             sb.append(entry.getKey() + "=" + entry.getValue()).append('\n');
@@ -597,6 +600,14 @@ public class KylinConfig extends KylinConfigBase {
             config.set((String) entry.getKey(), (String) entry.getValue());
         }
         return config;
+    }
+
+    public String getKylinConfDirectory() {
+        return kylinConfDirectory;
+    }
+
+    public String setKylinConfDirectory(String kylinConfDirectory) {
+        return this.kylinConfDirectory = kylinConfDirectory;
     }
 
     public KylinConfig base() {
